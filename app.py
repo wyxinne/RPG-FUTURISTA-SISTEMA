@@ -9,6 +9,7 @@ st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;500&display=swap');
 
+    /* Background conforme sua descrição: Muralha e Sucata */
     .stApp {
         background: linear-gradient(180deg, #1a0033 0%, #05080a 60%, #2c2c2c 100%);
         background-attachment: fixed;
@@ -41,18 +42,12 @@ st.markdown("""
         box-shadow: 4px 4px 0px #ffff00;
     }
 
-    /* ESTILOS DE CRÍTICO E FALHA SOLICITADOS */
-    .critico_vibrante { 
-        color: #00ff00 !important; /* Verde Totalmente Vibrante */
-        font-weight: 800; 
-        text-shadow: 0 0 12px #00ff00;
-    }
-    .falha_vibrante { 
-        color: #ff0000 !important; /* Vermelho Totalmente Vibrante */
-        font-weight: 800; 
-        font-style: italic;
-        text-shadow: 0 0 12px #ff0000;
-    }
+    /* ESTILOS DE CRÍTICO E FALHA COM TAMANHOS DIFERENTES */
+    .num_critico { color: #00ff00 !important; font-weight: 800; text-shadow: 0 0 10px #00ff00; }
+    .msg_critico { color: #00ff00 !important; font-size: 0.8em; font-weight: 400; }
+    
+    .num_falha { color: #ff0000 !important; font-weight: 800; text-shadow: 0 0 10px #ff0000; }
+    .msg_falha { color: #ff0000 !important; font-size: 0.8em; font-style: italic; font-weight: 400; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -78,14 +73,16 @@ if check_password():
     tab_combate, tab_rolagem, tab_pericias = st.tabs(["⚔️ COMBATE", "🎲 ROLAGEM LIVRE", "📊 PERÍCIAS"])
 
     with tab_combate:
-        st.subheader(f"PA: {st.session_state['pa']} / 10")
-        st.write("Módulo de combate pronto.")
+        st.subheader(f"ENERGIA: {st.session_state['pa']} / 10 PA")
+        if st.button("🕒 RECARREGAR PA"):
+            st.session_state["pa"] = 10
+            st.rerun()
 
     with tab_rolagem:
         st.subheader("TERMINAL DE DADOS NEURAIS")
-        entrada = st.text_input("INPUT:", value="2d20+3", key="roll_in")
+        entrada = st.text_input("COMANDO (Ex: 2d20+3):", value="2d20+3", key="roll_final")
         
-        if st.button("🎲 PROCESSAR ROLAGEM"):
+        if st.button("🎲 PROCESSAR"):
             try:
                 match = re.match(r'(\d+)d(\d+)([+-]\d+)?', entrada.replace(" ", "").lower())
                 if match:
@@ -96,22 +93,23 @@ if check_password():
                     maior_valor = max(rolagens)
                     resultado_final = maior_valor + bonus
                     
-                    # Formatação Vibrante
+                    # Formatação solicitada: (Mensagem) menor e número vibrante
                     html_dados = []
                     for r in rolagens:
                         if r == faces:
-                            html_dados.append(f"<span class='critico_vibrante'>{r} Crítico!</span>")
+                            html_dados.append(f"<span class='num_critico'>{r}</span> <span class='msg_critico'>(Crítico!)</span>")
                         elif r == 1:
-                            html_dados.append(f"<span class='falha_vibrante'>{r} Vish...</span>")
+                            html_dados.append(f"<span class='num_falha'>{r}</span> <span class='msg_falha'>(Vish...)</span>")
                         else:
                             html_dados.append(str(r))
                     
-                    st.markdown(f"### 🚀 Total: **{resultado_final}**")
-                    st.write(f"**Cálculo:** {maior_valor} + ({bonus})")
-                    st.markdown(f"**Dados:** {', '.join(html_dados)}", unsafe_allow_html=True)
+                    st.markdown(f"### 🚀 TOTAL: **{resultado_final}**")
+                    st.write(f"**Cálculo:** {maior_valor} (Maior Dado) + ({bonus})")
+                    st.markdown(f"**Dados Rolados:** {', '.join(html_dados)}", unsafe_allow_html=True)
                 else: st.error("Erro de sintaxe.")
-            except Exception: st.error("Falha no sistema.")
+            except Exception: st.error("Falha no terminal.")
 
     with tab_pericias:
         st.subheader("PERÍCIAS")
-        st.write("Consulte o Mestre.")
+        st.write("- Programação (Muralha)")
+        st.write("- Mecânica (Sucata)")
