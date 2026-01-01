@@ -5,10 +5,10 @@ import re
 # --- 1. CONFIGURAÇÃO E IDENTIDADE VISUAL ---
 st.set_page_config(page_title="NEON-WALL TERMINAL", layout="centered")
 
-# CSS para o visual: Roxo, Verde, Rosa e Amarelo Neon
+# CSS Corrigido para o visual: Roxo, Verde, Rosa e Amarelo Neon
 st.markdown("""
     <style>
-    /* Fundo degradê: Cidade/Muralha (Roxo/Preto) para Low-Life (Cinza Sucata) */
+    /* Fundo degradê: Cidade/Muralha para Low-Life */
     .stApp {
         background: linear-gradient(180deg, #1a0033 0%, #05080a 70%, #2c2c2c 100%);
         background-attachment: fixed;
@@ -17,11 +17,11 @@ st.markdown("""
     /* Estilo das Abas */
     .stTabs [data-baseweb="tab-list"] {
         gap: 10px;
-        background-color: rgba(0,0,0,0.5);
     }
     .stTabs [data-baseweb="tab"] {
         color: #00ff41 !important; /* Verde Neon */
         border: 1px solid #ff00ff !important; /* Rosa Neon */
+        background-color: rgba(0,0,0,0.6);
         padding: 10px;
     }
 
@@ -33,7 +33,7 @@ st.markdown("""
     }
     
     label, p, span {
-        color: #ffff00 !important; /* Amarelo Neon para detalhes */
+        color: #ffff00 !important; /* Amarelo Neon */
         font-family: 'Courier New', monospace;
     }
 
@@ -53,7 +53,7 @@ st.markdown("""
         box-shadow: 0px 0px 15px #ff00ff;
     }
     </style>
-    """, unsafe_allow_index=True)
+    """, unsafe_allow_html=True) # <-- A CORREÇÃO ESTÁ AQUI
 
 # --- 2. SISTEMA DE ACESSO ---
 def check_password():
@@ -73,10 +73,8 @@ def check_password():
     return False
 
 if check_password():
-    # Inicialização de Variáveis
     if "pa" not in st.session_state: st.session_state["pa"] = 10
 
-    # Banco de Dados
     armas = {
         "Faca / Punhal": {"dano": "1d4", "trauma": 6, "atrib": True},
         "Pistola Leve": {"dano": "1d6", "trauma": 6, "atrib": True},
@@ -93,7 +91,6 @@ if check_password():
         "Disparo": "Uso de armas de fogo."
     }
 
-    # --- 3. INTERFACE DE ABAS ---
     tab_combate, tab_pericias, tab_lore = st.tabs(["⚔️ COMBATE", "📊 PERÍCIAS", "🌆 MUNDO"])
 
     with tab_combate:
@@ -118,7 +115,6 @@ if check_password():
                 rolagem = sum([random.randint(1, tipo) for _ in range(num)])
                 dano_final = rolagem + mod_atrib
                 
-                # Trauma x3
                 trauma = random.randint(1, dados['trauma'])
                 if trauma == dados['trauma']:
                     st.error(f"💥 CRÍTICO! DANO TRIPLO: {dano_final * 3}")
@@ -132,14 +128,3 @@ if check_password():
         st.subheader("BANCO DE DADOS: PERÍCIAS")
         for nome, desc in pericias.items():
             st.markdown(f"**{nome}**: {desc}")
-        
-        st.divider()
-        p_sel = st.selectbox("TESTAR PERÍCIA:", list(pericias.keys()))
-        if st.button("🎲 ROLAR 2d6"):
-            r1, r2 = random.randint(1,6), random.randint(1,6)
-            st.info(f"RESULTADO: {r1} + {r2} = {r1+r2}")
-
-    with tab_lore:
-        st.subheader("REDE DA MURALHA")
-        st.write("A grande muralha separa o luxo corporativo da sucata inferior.")
-        st.write("Cuidado com os cabos prateados expostos na zona de baixo.")
