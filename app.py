@@ -1,15 +1,16 @@
 import streamlit as st
 import random
 import re
+import time  # Importado para gerar o marcador único
 
-# --- 1. CONFIGURAÇÃO E IDENTIDADE VISUAL (RESTALRAÇÃO TOTAL) ---
+# --- 1. CONFIGURAÇÃO E IDENTIDADE VISUAL ---
 st.set_page_config(page_title="NEON-WALL TERMINAL", layout="centered")
 
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;500&display=swap');
 
-    /* Fundo com a sua imagem cyberpunk */
+    /* Fundo Cyberpunk */
     .stApp {
         background-image: url("https://raw.githubusercontent.com/wyxinne/RPG-FUTURISTA-SISTEMA/main/fundo%20cyberpunk.png");
         background-size: cover;
@@ -17,14 +18,14 @@ st.markdown("""
         background-attachment: fixed;
     }
     
-    /* Títulos Verde Neon com Glow Rosa */
+    /* Títulos Verde Neon */
     h1, h2, h3 {
         color: #00ff41 !important;
         text-shadow: 0 0 10px #00ff41, 0 0 20px #ff00ff;
         font-family: 'Orbitron', sans-serif !important;
     }
     
-    /* Textos Gerais Amarelo Neon */
+    /* Textos Amarelo Neon */
     label, p, span, div {
         color: #ffff00 !important;
         font-family: 'Roboto Mono', monospace !important;
@@ -40,7 +41,7 @@ st.markdown("""
         border-radius: 4px 4px 0px 0px;
     }
 
-    /* Botões Neon com Sombra */
+    /* Botões Neon */
     .stButton>button {
         width: 100%;
         border: 2px solid #00ff41 !important;
@@ -56,21 +57,21 @@ st.markdown("""
         box-shadow: 0px 0px 20px #ff00ff;
     }
 
-    /* Configurações Vibrantes de Crítico e Falha */
+    /* Crítico e Falha */
     .num_critico { color: #00ff00 !important; font-weight: 800; text-shadow: 0 0 15px #00ff00; font-size: 1.2em; }
     .msg_critico { color: #00ff00 !important; font-size: 0.85em; font-weight: 400; }
-    
     .num_falha { color: #ff0000 !important; font-weight: 800; text-shadow: 0 0 15px #ff0000; font-size: 1.2em; }
     .msg_falha { color: #ff0000 !important; font-size: 0.85em; font-style: italic; font-weight: 400; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- FUNÇÃO DE ÁUDIO ---
+# --- FUNÇÃO DE ÁUDIO ATUALIZADA (FORÇA REPRODUÇÃO) ---
 def play_dice_sound():
     url_audio = "https://raw.githubusercontent.com/wyxinne/RPG-FUTURISTA-SISTEMA/main/dados%202.m4a"
+    # O "t={time.time()}" engana o navegador fazendo-o pensar que é um áudio novo toda vez
     audio_html = f"""
         <audio autoplay style="display:none;">
-            <source src="{url_audio}" type="audio/mp4">
+            <source src="{url_audio}?t={time.time()}" type="audio/mp4">
         </audio>
     """
     st.markdown(audio_html, unsafe_allow_html=True)
@@ -101,10 +102,9 @@ if check_password():
         entrada = st.text_input("DIGITE SEUS DADOS E BÔNUS (Ex: 2d20+3):", value="2d20+3", key="roll_main")
         
         if st.button("🎲 ROLAR"):
-            play_dice_sound() # Som disparado no clique
+            play_dice_sound() # Agora dispara sempre
             
             try:
-                # Processamento da string (ex: 2d20+5)
                 match = re.match(r'(\d+)d(\d+)([+-]\d+)?', entrada.replace(" ", "").lower())
                 if match:
                     qtd, faces = int(match.group(1)), int(match.group(2))
@@ -114,7 +114,6 @@ if check_password():
                     maior_valor = max(rolagens)
                     resultado_final = maior_valor + bonus
                     
-                    # Montagem do HTML dos dados individuais
                     html_dados = []
                     for r in rolagens:
                         if r == faces:
