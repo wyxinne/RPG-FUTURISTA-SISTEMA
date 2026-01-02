@@ -11,7 +11,7 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;500&family=Press+Start+2P&display=swap');
 
     /* FORÇAR CAIXA ALTA GLOBAL */
-    html, body, [data-testid="stAppViewContainer"], button, input {
+    html, body, [data-testid="stAppViewContainer"], button, input, .stTabs {
         text-transform: uppercase !important;
     }
 
@@ -44,21 +44,23 @@ st.markdown("""
     /* Estilo de todas as abas (não selecionadas) */
     .stTabs [data-baseweb="tab"] {
         color: #00ff41 !important;
-        background-color: rgba(0, 0, 0, 0.7) !important;
+        background-color: rgba(0, 0, 0, 0.8) !important;
         border: 1px solid #ff00ff !important;
         font-family: 'Press Start 2P', cursive !important;
         font-size: 10px !important;
         padding: 10px 15px !important;
         border-radius: 4px 4px 0px 0px;
-        transition: all 0.3s ease;
+        font-weight: 400; /* Peso normal para abas inativas */
     }
 
-    /* ABA SELECIONADA (FOCO ATIVO) */
+    /* ABA SELECIONADA (ROXO CHAPADO E ROSA SÓLIDO NEGRITO) */
     .stTabs [aria-selected="true"] {
-        background-color: #300066 !important; /* Roxo Escuro */
-        color: #ff00ff !important; /* Rosa Neon */
-        text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff !important; /* Brilho Rosa */
-        border-bottom: 2px solid #ff00ff !important;
+        background-color: #6a0dad !important; /* Roxo Chapado */
+        color: #ff00ff !important; /* Rosa Neon Sólido */
+        text-shadow: none !important; /* REMOVIDO O EFEITO NEON/BRILHO */
+        font-weight: 900 !important; /* NEGRITO MAIS FORTE */
+        border: 1px solid #ff00ff !important;
+        opacity: 1 !important;
     }
 
     /* BOTÕES NEON */
@@ -69,7 +71,6 @@ st.markdown("""
         color: #ff00ff !important;
         font-family: 'Orbitron', sans-serif !important;
         box-shadow: 4px 4px 0px #ffff00;
-        transition: 0.3s;
     }
     .stButton>button:hover {
         background-color: #ff00ff !important;
@@ -114,7 +115,7 @@ if check_password():
 
     with tab_rolagem:
         st.subheader("TERMINAL DE DADOS NEURAIS")
-        entrada = st.text_input("COMANDO DE DADOS (EX: 2D20+5):", value="2D20+3", key="roll_main")
+        entrada = st.text_input("COMANDO DE DADOS:", value="2D20+3", key="roll_main")
         
         if st.button("🎲 ROLAR"):
             play_dice_sound()
