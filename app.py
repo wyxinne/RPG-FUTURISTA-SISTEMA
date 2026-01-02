@@ -97,10 +97,10 @@ if check_password():
     tab_combate, tab_rolagem, tab_pericias = st.tabs(["⚔️ COMBATE", "🎲 ROLAGEM LIVRE", "📊 PERÍCIAS"])
 
     with tab_rolagem:
-        st.subheader("TERMINAL DE DADOS NEURAIS")
-        entrada = st.text_input("COMANDO (Ex: 2d20+3):", value="2d20+3", key="roll_main")
+        st.subheader("TERMINAL DE DADOS INDEPENDENTES")
+        entrada = st.text_input("DIGITE SEUS DADOS E BÔNUS (Ex: 2d20+3):", value="2d20+3", key="roll_main")
         
-        if st.button("🎲 PROCESSAR ROLAGEM"):
+        if st.button("🎲 ROLAR"):
             play_dice_sound() # Som disparado no clique
             
             try:
@@ -124,9 +124,9 @@ if check_password():
                         else:
                             html_dados.append(str(r))
                     
-                    st.markdown(f"### 🚀 RESULTADO: **{resultado_final}**")
+                    st.markdown(f"### 🚀 TOTAL: **{resultado_final}**")
                     st.write(f"**Lógica:** Maior Dado ({maior_valor}) + Bônus ({bonus})")
-                    st.markdown(f"**Dados na Mesa:** {', '.join(html_dados)}", unsafe_allow_html=True)
+                    st.markdown(f"**Dados rolados:** {', '.join(html_dados)}", unsafe_allow_html=True)
                 else: st.error("Sintaxe inválida, operador.")
             except Exception: st.error("Erro no processador neural.")
 
