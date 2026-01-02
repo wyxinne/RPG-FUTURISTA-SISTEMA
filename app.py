@@ -36,6 +36,14 @@ st.markdown("""
         font-family: 'Roboto Mono', monospace !important;
     }
 
+    /* TEXTO RESULTADO E TOTAL EM ROSA NEON */
+    .destaque-neon {
+        color: #ff00ff !important;
+        text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+        font-family: 'Orbitron', sans-serif !important;
+        font-weight: bold;
+    }
+
     /* --- ESTILIZAÇÃO DAS ABAS (TABS) --- */
     .stTabs [data-baseweb="tab-list"] { gap: 8px; }
 
@@ -51,8 +59,8 @@ st.markdown("""
     }
 
     .stTabs [aria-selected="true"] {
-        background-color: #6a0dad !important; /* Roxo Chapado */
-        color: #ff00ff !important; /* Rosa Sólido */
+        background-color: #6a0dad !important;
+        color: #ff00ff !important;
         text-shadow: none !important;
         font-weight: 900 !important;
         border: 1px solid #ff00ff !important;
@@ -86,7 +94,7 @@ def check_password():
         st.session_state["password_correct"] = False
     if st.session_state["password_correct"]: return True
 
-    st.title("📟 MURALHA DE SEGURANÇA")
+    st.title("MURALHA DE SEGURANÇA")
     password = st.text_input("CHAVE DA REDE:", type="password")
     if st.button("CONECTAR"):
         if password == "cyber2024":
@@ -115,10 +123,9 @@ if check_password():
                     
                     rolagens = [random.randint(1, faces) for _ in range(qtd)]
                     
-                    # LOGICA SOLICITADA
                     maior_dado = max(rolagens)
-                    resultado_final = maior_dado + bonus # MAIOR + BONUS
-                    soma_total = sum(rolagens) + bonus # SOMA + BONUS
+                    resultado_final = maior_dado + bonus
+                    soma_total = sum(rolagens) + bonus
                     
                     html_dados = []
                     for r in rolagens:
@@ -129,12 +136,14 @@ if check_password():
                         else:
                             html_dados.append(str(r))
                     
-                    # EXIBIÇÃO
-                    st.markdown(f"### 🚀 RESULTADO: **{resultado_final}**")
+                    # EXIBIÇÃO COM CORES NEON
+                    st.markdown(f"<h3 class='destaque-neon'>RESULTADO: {resultado_final}</h3>", unsafe_allow_html=True)
                     st.write(f"**LÓGICA:** MAIOR DADO ({maior_dado}) + BÔNUS ({bonus})")
                     st.markdown(f"**DADOS ROLADOS:** {', '.join(html_dados)}", unsafe_allow_html=True)
+                    
                     st.markdown(f"---")
-                    st.markdown(f"### 📊 TOTAL: **{soma_total}**")
+                    
+                    st.markdown(f"<h3 class='destaque-neon'>TOTAL: {soma_total}</h3>", unsafe_allow_html=True)
                     st.write(f"**LÓGICA:** SOMA DE TODOS OS DADOS + BÔNUS")
                     
                 else: st.error("SINTAXE INVÁLIDA.")
@@ -142,7 +151,7 @@ if check_password():
 
     with tab_combate:
         st.subheader(f"PONTOS DE AÇÃO: {st.session_state['pa']} / 10")
-        if st.button("🕒 RECARREGAR PA"):
+        if st.button("RECARREGAR PA"):
             st.session_state["pa"] = 10
             st.rerun()
 
