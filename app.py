@@ -1,157 +1,116 @@
 import streamlit as st
 import random
 import re
-import time
 
 # --- 1. CONFIGURAÇÃO E IDENTIDADE VISUAL ---
-st.set_page_config(page_title="NEON-WALL TERMINAL", layout="centered")
+st.set_page_config(page_title="NEON-WALL TERMINAL", layout="wide")
 
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;500&family=Press+Start+2P&display=swap');
-
-    html, body, [data-testid="stAppViewContainer"], button, input, .stTabs {
-        text-transform: uppercase !important;
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;500&display=swap');
 
     .stApp {
         background-image: url("https://raw.githubusercontent.com/wyxinne/RPG-FUTURISTA-SISTEMA/main/fundo%20cyberpunk.png");
-        background-size: cover;
-        background-position: center center;
-        background-attachment: fixed;
+        background-size: cover; background-position: center; background-attachment: fixed;
     }
-    
-    h1, h2, h3 {
-        color: #00ff41 !important;
-        text-shadow: 0 0 10px #00ff41;
-        font-family: 'Orbitron', sans-serif !important;
+    html, body, [data-testid="stAppViewContainer"], button, input, .stTabs {
+        text-transform: uppercase !important; font-family: 'Roboto Mono', monospace !important;
     }
-    
-    label, p, span, div {
-        color: #ffff00 !important;
-        font-family: 'Roboto Mono', monospace !important;
-    }
+    h1, h2, h3 { color: #00ff41 !important; text-shadow: 0 0 10px #00ff41; font-family: 'Orbitron', sans-serif !important; }
+    label, p, span, div { color: #ffff00 !important; }
 
-    .destaque-neon {
-        color: #ff00ff !important;
-        text-shadow: 0 0 10px #ff00ff;
-        font-family: 'Orbitron', sans-serif !important;
-        font-size: 1.8em;
-        font-weight: bold;
+    /* Caixas de Cyberware Prateadas */
+    div[data-testid="stTextInput"] input {
+        background-color: rgba(192, 192, 192, 0.2) !important;
+        border: 1px solid #C0C0C0 !important; color: #C0C0C0 !important;
     }
-
-    .sub-destaque-neon {
-        color: #ff00ff !important;
-        text-shadow: 0 0 5px #ff00ff;
-        font-family: 'Orbitron', sans-serif !important;
-        font-size: 1.1em;
-    }
-
-    /* ESTILO DAS CAIXAS DE CYBERWARE PRATEADAS */
-    .stTextInput input {
-        background-color: rgba(192, 192, 192, 0.1) !important;
-        border: 1px solid #C0C0C0 !important;
-        color: #C0C0C0 !important;
-    }
-
-    /* BOTÕES */
     .stButton>button {
-        width: 100%;
-        border: 1px solid #00ff41 !important;
-        background-color: #1a1a1a !important;
-        color: #00ff41 !important;
-        font-family: 'Orbitron', sans-serif !important;
+        border: 1px solid #00ff41 !important; background-color: #1a1a1a !important;
+        color: #00ff41 !important; font-family: 'Orbitron', sans-serif !important;
     }
+    .stButton>button:hover { border: 1px solid #ff00ff !important; color: #ff00ff !important; box-shadow: 0 0 15px #ff00ff; }
     </style>
     """, unsafe_allow_html=True)
 
-# Inicialização de variáveis de estado
-if "hp_atual" not in st.session_state: st.session_state.hp_atual = 20
-if "hp_max" not in st.session_state: st.session_state.hp_max = 20
-if "strain_atual" not in st.session_state: st.session_state.strain_atual = 0
-if "strain_max" not in st.session_state: st.session_state.strain_max = 10
+# --- 2. ÁUDIO DE AMBIÊNCIA (FIXO) ---
+st.audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3")
 
-def check_password():
-    if "password_correct" not in st.session_state: st.session_state["password_correct"] = False
-    if st.session_state["password_correct"]: return True
-    st.title("MURALHA DE SEGURANÇA")
-    password = st.text_input("CHAVE DA REDE:", type="password")
-    if st.button("CONECTAR"):
-        if password == "cyber2024":
-            st.session_state["password_correct"] = True
-            st.rerun()
-        else: st.error("ACESSO NEGADO.")
-    return False
+# --- 3. BANCO DE DADOS (SESSION STATE) ---
+if "personagens" not in st.session_state:
+    st.session_state.personagens = {
+        "P1": {"nome": "OPERADOR_01", "ocupacao": "RUNNER", "hp": 20, "hp_max": 20, "strain": 0, "strain_max": 10}
+    }
+if "perfil_logado" not in st.session_state:
+    st.session_state.perfil_logado = None
 
-if check_password():
-    tab_status, tab_combate, tab_rolagem = st.tabs(["STATUS", "COMBATE", "ROLAGEM LIVRE"])
+# --- 4. SISTEMA DE LOGIN ---
+if not st.session_state.perfil_logado:
+    st.title("ACESSO À MURALHA")
+    col_l, _ = st.columns([1, 2])
+    with col_l:
+        perf = st.selectbox("IDENTIFIQUE-SE:", ["JOGADOR", "MESTRE"])
+        pw = st.text_input("CHAVE DE ACESSO:", type="password")
+        if st.button("CONECTAR"):
+            if perf == "MESTRE" and pw == "mestre":
+                st.session_state.perfil_logado = "MESTRE"
+                st.rerun()
+            elif perf == "JOGADOR" and pw == "cyber2024":
+                st.session_state.perfil_logado = "JOGADOR"
+                st.rerun()
+            else: st.error("ACESSO NEGADO.")
+else:
+    # Sidebar de Logout
+    if st.sidebar.button("DESCONECTAR"):
+        st.session_state.perfil_logado = None
+        st.rerun()
 
-    with tab_status:
-        col_id, col_cyber = st.columns([1.5, 1])
+    # --- 5. PERFIL MESTRE ---
+    if st.session_state.perfil_logado == "MESTRE":
+        t_mestre = st.tabs(["🛰️ CONTROLE GERAL", "🧬 CRIAR PERFIS"])
+        with t_mestre[0]:
+            st.header("STATUS DE TODOS OS JOGADORES")
+            for pid, pdata in st.session_state.personagens.items():
+                st.markdown(f"**{pdata['nome']}** | HP: {pdata['hp']}/{pdata['hp_max']} | STRAIN: {pdata['strain']}/{pdata['strain_max']}")
+        with t_mestre[1]:
+            st.header("CADASTRAR NOVO JOGADOR")
+            new_id = st.text_input("ID DE LOGIN")
+            new_n = st.text_input("NOME DO PERSONAGEM")
+            if st.button("CADASTRAR"):
+                st.session_state.personagens[new_id] = {"nome": new_n, "ocupacao": "N/A", "hp": 20, "hp_max": 20, "strain": 0, "strain_max": 10}
+                st.success("REGISTRADO.")
 
-        with col_id:
-            # Identificação
-            st.text_input("PERSONAGEM:", placeholder="NOME DO OPERADOR")
-            st.text_input("OCUPAÇÃO:", placeholder="EX: HACKER / MERCENÁRIO")
-            
-            st.markdown("---")
+    # --- 6. PERFIL JOGADOR ---
+    else:
+        p_id = st.selectbox("CONFIRME SUA IDENTIDADE:", list(st.session_state.personagens.keys()))
+        char = st.session_state.personagens[p_id]
+        tab_stat, tab_roll = st.tabs(["STATUS", "ROLAGEM LIVRE"])
 
-            # Gerenciamento de HP
-            st.write(f"INTEGRIDADE (HP): {st.session_state.hp_atual} / {st.session_state.hp_max}")
-            new_hp_max = st.number_input("HP MÁXIMO (CLIQUE DUPLO P/ EDITAR)", value=st.session_state.hp_max, step=1)
-            st.session_state.hp_max = new_hp_max
-            
-            # Barra de HP (Verde)
-            progresso_hp = min(st.session_state.hp_atual / max(1, st.session_state.hp_max), 1.0)
-            st.progress(progresso_hp)
-            
-            c1, c2, c3, c4 = st.columns(4)
-            if c1.button("--", help="Remove 5 HP"): st.session_state.hp_atual -= 5
-            if c2.button("-", help="Remove 1 HP"): st.session_state.hp_atual -= 1
-            if c3.button("+", help="Adiciona 1 HP"): st.session_state.hp_atual += 1
-            if c4.button("++", help="Adiciona 5 HP"): st.session_state.hp_atual += 5
-
-            st.markdown("---")
-
-            # Gerenciamento de Strain
-            new_strain_max = st.number_input("LIMITE DE SOBRECARGA (STRAIN)", value=st.session_state.strain_max, step=1)
-            st.session_state.strain_max = new_strain_max
-            
-            # Lógica de Cor da Barra de Strain
-            atual = st.session_state.strain_atual
-            maximo = st.session_state.strain_max
-            
-            cor_strain = "yellow" # Amarela (Inicial)
-            if atual >= (maximo / 2): cor_strain = "orange" # Laranja (Metade)
-            if atual >= (maximo - 2) and atual > 0: cor_strain = "red" # Vermelha (Faltam 2)
-
-            st.markdown(f"SOBRECARGA: <span style='color:{cor_strain}; font-weight:bold;'>{atual} / {maximo}</span>", unsafe_allow_html=True)
-            progresso_strain = min(atual / max(1, maximo), 1.0)
-            st.progress(progresso_strain)
-            
-            # Botões Strain
-            sc1, sc2 = st.columns(2)
-            if sc1.button("- STRAIN"): st.session_state.strain_atual -= 1
-            if sc2.button("+ STRAIN"): st.session_state.strain_atual += 1
-
-        with col_cyber:
-            st.subheader("LISTA DE CYBERWARE")
-            for i in range(6): # Cria 6 fileiras de implantes
-                ca, cb = st.columns([3, 1])
-                with ca:
-                    st.text_input(f"IMPLANTE {i+1}", key=f"cyber_{i}", placeholder="DETALHE O HARDWARE")
-                with cb:
-                    st.text_input("ST", key=f"st_{i}", placeholder="ST")
-
-    with tab_rolagem:
-        st.subheader("TERMINAL DE DADOS INDEPENDENTES")
-        entrada = st.text_input("COMANDO:", value="2D20+3")
-        if st.button("🎲 ROLAR"):
-            # Lógica de rolagem simplificada para o exemplo
-            st.markdown(f"<p class='destaque-neon'>RESULTADO: 18</p>", unsafe_allow_html=True)
-            st.markdown(f"<p class='sub-destaque-neon'>TOTAL: 25</p>", unsafe_allow_html=True)
-
-    with tab_combate:
-        st.subheader("INTERFACE DE ATAQUE")
-        st.write("STATUS RÁPIDO:")
-        st.info(f"HP: {st.session_state.hp_atual} | STRAIN: {st.session_state.strain_atual}")
+        with tab_stat:
+            col_id, col_cyber = st.columns([1.5, 1])
+            with col_id:
+                # Topo Esquerdo
+                st.session_state.personagens[p_id]['nome'] = st.text_input("NOME:", value=char['nome'])
+                st.session_state.personagens[p_id]['ocupacao'] = st.text_input("OCUPAÇÃO:", value=char['ocupacao'])
+                st.markdown("---")
+                # HP
+                hp_m = st.number_input("HP MÁXIMO:", value=char['hp_max'], step=1)
+                st.session_state.personagens[p_id]['hp_max'] = hp_m
+                st.write(f"INTEGRIDADE: {char['hp']} / {hp_m}")
+                st.progress(min(max(char['hp']/max(1, hp_m), 0.0), 1.0))
+                c1, c2, c3, c4 = st.columns(4)
+                if c1.button("--", key="h1"): st.session_state.personagens[p_id]['hp'] -= 5
+                if c2.button("-", key="h2"): st.session_state.personagens[p_id]['hp'] -= 1
+                if c3.button("+", key="h3"): st.session_state.personagens[p_id]['hp'] += 1
+                if c4.button("++", key="h4"): st.session_state.personagens[p_id]['hp'] += 5
+                st.markdown("---")
+                # STRAIN
+                st_m = st.number_input("LIMITE DE STRAIN:", value=char['strain_max'], step=1)
+                st.session_state.personagens[p_id]['strain_max'] = st_m
+                cor = "#ffff00" # Amarelo
+                if char['strain'] >= (st_m / 2): cor = "#ffa500" # Laranja
+                if char['strain'] >= (st_m - 2): cor = "#ff0000" # Vermelho
+                st.markdown(f"SOBRECARGA: <span style='color:{cor}; font-weight:bold;'>{char['strain']} / {st_m}</span>", unsafe_allow_html=True)
+                st.progress(min(max(char['strain']/max(1, st_m), 0.0), 1.0))
+                sc1, sc2 = st.columns(2)
+                if sc1.button("- STRAIN", key="s1"): st.session_state.personagens[p_id]['strain'] -= 1
+                if sc2.button("+ STRAIN",
