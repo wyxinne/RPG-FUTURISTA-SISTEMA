@@ -10,24 +10,20 @@ st.markdown("""
     /* Importando as fontes */
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;500&display=swap');
 
-    /* --- CONFIGURAÇÃO DO FUNDO COM IMAGEM --- */
+    /* --- CONFIGURAÇÃO DO FUNDO (SEM MÁSCARA) --- */
     .stApp {
-        /* 1. COLOQUE O LINK DA SUA IMAGEM DENTRO DAS ASPAS ABAIXO */
-        background-image: url("https://github.com/wyxinne/RPG-FUTURISTA-SISTEMA/blob/main/fundo%20cyberpunk.png");
+        /* Link RAW da sua imagem */
+        background-image: url("https://raw.githubusercontent.com/wyxinne/RPG-FUTURISTA-SISTEMA/main/fundo%20cyberpunk.png");
         
-        /* Ajusta a imagem para cobrir toda a tela sem distorcer */
+        /* Ajustes para a imagem cobrir tudo */
         background-size: cover;
         background-position: center center;
         background-attachment: fixed;
         
-        /* --- EFEITO DE OPACIDADE/ESCURECIMENTO --- */
-        /* Cor preta com 70% de transparência (mude o 0.7 para mais ou menos escuro) */
-        background-color: rgba(0, 0, 0, 0.7);
-        /* Mistura a cor preta com a imagem para escurecê-la */
-        background-blend-mode: overlay;
+        /* SEM o background-color e blend-mode que escureciam a tela */
     }
     
-    /* --- Resto do Estilo Neon (Títulos, Botões, etc.) --- */
+    /* --- Estilização Neon --- */
     h1, h2, h3 {
         color: #00ff41 !important;
         text-shadow: 0 0 10px #00ff41, 0 0 20px #ff00ff;
@@ -39,12 +35,12 @@ st.markdown("""
         font-family: 'Roboto Mono', monospace !important;
     }
 
-    /* Abas com fundo semi-transparente para ler sobre a imagem */
+    /* Abas: Mantive um fundo leve nas abas para o texto não sumir em cima da imagem */
     .stTabs [data-baseweb="tab-list"] { gap: 10px; }
     .stTabs [data-baseweb="tab"] {
         color: #00ff41 !important;
         border: 1px solid #ff00ff !important;
-        background-color: rgba(0, 0, 0, 0.8) !important; /* Mais escuro para contraste */
+        background-color: rgba(0, 0, 0, 0.8) !important;
         font-family: 'Orbitron', sans-serif !important;
         border-radius: 4px 4px 0px 0px;
     }
@@ -64,7 +60,7 @@ st.markdown("""
         box-shadow: 0px 0px 20px #ff00ff;
     }
 
-    /* Estilos de Crítico e Falha com tamanhos diferentes */
+    /* Críticos e Falhas (Verde e Vermelho Vibrantes) */
     .num_critico { color: #00ff00 !important; font-weight: 800; text-shadow: 0 0 10px #00ff00; }
     .msg_critico { color: #00ff00 !important; font-size: 0.8em; font-weight: 400; }
     .num_falha { color: #ff0000 !important; font-weight: 800; text-shadow: 0 0 10px #ff0000; }
