@@ -36,12 +36,24 @@ st.markdown("""
         font-family: 'Roboto Mono', monospace !important;
     }
 
-    /* TEXTO RESULTADO E TOTAL EM ROSA NEON */
+    /* TEXTO RESULTADO (DESTAQUE PRINCIPAL) */
     .destaque-neon {
         color: #ff00ff !important;
         text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
         font-family: 'Orbitron', sans-serif !important;
+        font-size: 1.8em;
         font-weight: bold;
+        margin-bottom: 0px;
+    }
+
+    /* TEXTO TOTAL (MENOS DESTAQUE) */
+    .sub-destaque-neon {
+        color: #ff00ff !important;
+        text-shadow: 0 0 5px #ff00ff;
+        font-family: 'Orbitron', sans-serif !important;
+        font-size: 1.1em;
+        font-weight: normal;
+        margin-top: 10px;
     }
 
     /* --- ESTILIZAÇÃO DAS ABAS (TABS) --- */
@@ -55,13 +67,11 @@ st.markdown("""
         font-size: 10px !important;
         padding: 10px 15px !important;
         border-radius: 4px 4px 0px 0px;
-        font-weight: 400;
     }
 
     .stTabs [aria-selected="true"] {
         background-color: #6a0dad !important;
         color: #ff00ff !important;
-        text-shadow: none !important;
         font-weight: 900 !important;
         border: 1px solid #ff00ff !important;
     }
@@ -136,14 +146,13 @@ if check_password():
                         else:
                             html_dados.append(str(r))
                     
-                    # EXIBIÇÃO COM CORES NEON
-                    st.markdown(f"<h3 class='destaque-neon'>RESULTADO: {resultado_final}</h3>", unsafe_allow_html=True)
+                    # EXIBIÇÃO COM HIERARQUIA
+                    st.markdown(f"<p class='destaque-neon'>RESULTADO: {resultado_final}</p>", unsafe_allow_html=True)
                     st.write(f"**LÓGICA:** MAIOR DADO ({maior_dado}) + BÔNUS ({bonus})")
+                    
                     st.markdown(f"**DADOS ROLADOS:** {', '.join(html_dados)}", unsafe_allow_html=True)
                     
-                    st.markdown(f"---")
-                    
-                    st.markdown(f"<h3 class='destaque-neon'>TOTAL: {soma_total}</h3>", unsafe_allow_html=True)
+                    st.markdown(f"<p class='sub-destaque-neon'>TOTAL: {soma_total}</p>", unsafe_allow_html=True)
                     st.write(f"**LÓGICA:** SOMA DE TODOS OS DADOS + BÔNUS")
                     
                 else: st.error("SINTAXE INVÁLIDA.")
