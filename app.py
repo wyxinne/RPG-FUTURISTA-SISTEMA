@@ -37,11 +37,8 @@ st.markdown("""
     }
 
     /* --- ESTILIZAÇÃO DAS ABAS (TABS) --- */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-    }
+    .stTabs [data-baseweb="tab-list"] { gap: 8px; }
 
-    /* Estilo de todas as abas (não selecionadas) */
     .stTabs [data-baseweb="tab"] {
         color: #00ff41 !important;
         background-color: rgba(0, 0, 0, 0.8) !important;
@@ -50,17 +47,15 @@ st.markdown("""
         font-size: 10px !important;
         padding: 10px 15px !important;
         border-radius: 4px 4px 0px 0px;
-        font-weight: 400; /* Peso normal para abas inativas */
+        font-weight: 400;
     }
 
-    /* ABA SELECIONADA (ROXO CHAPADO E ROSA SÓLIDO NEGRITO) */
     .stTabs [aria-selected="true"] {
         background-color: #6a0dad !important; /* Roxo Chapado */
-        color: #ff00ff !important; /* Rosa Neon Sólido */
-        text-shadow: none !important; /* REMOVIDO O EFEITO NEON/BRILHO */
-        font-weight: 900 !important; /* NEGRITO MAIS FORTE */
+        color: #ff00ff !important; /* Rosa Sólido */
+        text-shadow: none !important;
+        font-weight: 900 !important;
         border: 1px solid #ff00ff !important;
-        opacity: 1 !important;
     }
 
     /* BOTÕES NEON */
@@ -72,11 +67,6 @@ st.markdown("""
         font-family: 'Orbitron', sans-serif !important;
         box-shadow: 4px 4px 0px #ffff00;
     }
-    .stButton>button:hover {
-        background-color: #ff00ff !important;
-        color: #000000 !important;
-        box-shadow: 0px 0px 20px #ff00ff;
-    }
 
     /* CRÍTICO E FALHA */
     .num_critico { color: #00ff00 !important; font-weight: 800; text-shadow: 0 0 15px #00ff00; font-size: 1.2em; }
@@ -86,13 +76,11 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- FUNÇÃO DE ÁUDIO ---
 def play_dice_sound():
     url_audio = "https://raw.githubusercontent.com/wyxinne/RPG-FUTURISTA-SISTEMA/main/dados%202.m4a"
     audio_html = f"""<audio autoplay style="display:none;"><source src="{url_audio}?t={time.time()}" type="audio/mp4"></audio>"""
     st.markdown(audio_html, unsafe_allow_html=True)
 
-# --- 2. SISTEMA DE ACESSO ---
 def check_password():
     if "password_correct" not in st.session_state:
         st.session_state["password_correct"] = False
@@ -107,7 +95,6 @@ def check_password():
         else: st.error("ACESSO NEGADO.")
     return False
 
-# --- 3. CONTEÚDO PRINCIPAL ---
 if check_password():
     if "pa" not in st.session_state: st.session_state["pa"] = 10
 
@@ -127,8 +114,11 @@ if check_password():
                     bonus = int(match.group(3)) if match.group(3) else 0
                     
                     rolagens = [random.randint(1, faces) for _ in range(qtd)]
-                    soma_dados = sum(rolagens)
-                    resultado_final = soma_dados + bonus
+                    
+                    # LOGICA SOLICITADA
+                    maior_dado = max(rolagens)
+                    resultado_final = maior_dado + bonus # MAIOR + BONUS
+                    soma_total = sum(rolagens) + bonus # SOMA + BONUS
                     
                     html_dados = []
                     for r in rolagens:
@@ -139,9 +129,14 @@ if check_password():
                         else:
                             html_dados.append(str(r))
                     
-                    st.markdown(f"### 🚀 TOTAL: **{resultado_final}**")
-                    st.write(f"**LÓGICA:** SOMA ({soma_dados}) + BÔNUS ({bonus})")
+                    # EXIBIÇÃO
+                    st.markdown(f"### 🚀 RESULTADO: **{resultado_final}**")
+                    st.write(f"**LÓGICA:** MAIOR DADO ({maior_dado}) + BÔNUS ({bonus})")
                     st.markdown(f"**DADOS ROLADOS:** {', '.join(html_dados)}", unsafe_allow_html=True)
+                    st.markdown(f"---")
+                    st.markdown(f"### 📊 TOTAL: **{soma_total}**")
+                    st.write(f"**LÓGICA:** SOMA DE TODOS OS DADOS + BÔNUS")
+                    
                 else: st.error("SINTAXE INVÁLIDA.")
             except Exception: st.error("ERRO NO PROCESSADOR.")
 
