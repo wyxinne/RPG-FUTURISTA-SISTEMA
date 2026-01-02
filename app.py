@@ -2,69 +2,64 @@ import streamlit as st
 import random
 import re
 
+# --- FUNÇÃO PARA DISPARAR O ÁUDIO ---
+def play_audio(url):
+    # Injeta um HTML invisível que força o navegador a tocar o som uma vez
+    # Usando type="audio/mp4" para compatibilidade com arquivos .m4a
+    audio_html = f"""
+        <audio autoplay style="display:none;">
+            <source src="{url}" type="audio/mp4">
+        </audio>
+    """
+    st.markdown(audio_html, unsafe_allow_html=True)
+
 # --- 1. CONFIGURAÇÃO E IDENTIDADE VISUAL ---
 st.set_page_config(page_title="NEON-WALL TERMINAL", layout="centered")
 
 st.markdown("""
     <style>
-    /* Importando as fontes */
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;500&display=swap');
 
-    /* --- CONFIGURAÇÃO DO FUNDO (SEM MÁSCARA) --- */
-    .stApp {
-        /* Link RAW da sua imagem */
+    /* Fundo com a sua imagem cyberpunk */
+    .stApp {{
         background-image: url("https://raw.githubusercontent.com/wyxinne/RPG-FUTURISTA-SISTEMA/main/fundo%20cyberpunk.png");
-        
-        /* Ajustes para a imagem cobrir tudo */
         background-size: cover;
         background-position: center center;
         background-attachment: fixed;
-        
-        /* SEM o background-color e blend-mode que escureciam a tela */
-    }
+    }}
     
-    /* --- Estilização Neon --- */
-    h1, h2, h3 {
+    h1, h2, h3 {{
         color: #00ff41 !important;
         text-shadow: 0 0 10px #00ff41, 0 0 20px #ff00ff;
         font-family: 'Orbitron', sans-serif !important;
-    }
+    }}
     
-    label, p, span, div {
+    label, p, span, div {{
         color: #ffff00 !important;
         font-family: 'Roboto Mono', monospace !important;
-    }
+    }}
 
-    /* Abas: Mantive um fundo leve nas abas para o texto não sumir em cima da imagem */
-    .stTabs [data-baseweb="tab-list"] { gap: 10px; }
-    .stTabs [data-baseweb="tab"] {
+    .stTabs [data-baseweb="tab"] {{
         color: #00ff41 !important;
         border: 1px solid #ff00ff !important;
         background-color: rgba(0, 0, 0, 0.8) !important;
         font-family: 'Orbitron', sans-serif !important;
-        border-radius: 4px 4px 0px 0px;
-    }
+    }}
 
-    .stButton>button {
+    .stButton>button {{
         width: 100%;
         border: 2px solid #00ff41 !important;
         background-color: #1a1a1a !important;
         color: #ff00ff !important;
         font-family: 'Orbitron', sans-serif !important;
         box-shadow: 4px 4px 0px #ffff00;
-        transition: 0.3s;
-    }
-    .stButton>button:hover {
-        background-color: #ff00ff !important;
-        color: #000000 !important;
-        box-shadow: 0px 0px 20px #ff00ff;
-    }
+    }}
 
-    /* Críticos e Falhas (Verde e Vermelho Vibrantes) */
-    .num_critico { color: #00ff00 !important; font-weight: 800; text-shadow: 0 0 10px #00ff00; }
-    .msg_critico { color: #00ff00 !important; font-size: 0.8em; font-weight: 400; }
-    .num_falha { color: #ff0000 !important; font-weight: 800; text-shadow: 0 0 10px #ff0000; }
-    .msg_falha { color: #ff0000 !important; font-size: 0.8em; font-style: italic; font-weight: 400; }
+    /* Estilos de Crítico e Falha */
+    .num_critico {{ color: #00ff00 !important; font-weight: 800; text-shadow: 0 0 10px #00ff00; }}
+    .msg_critico {{ color: #00ff00 !important; font-size: 0.8em; font-weight: 400; }}
+    .num_falha {{ color: #ff0000 !important; font-weight: 800; text-shadow: 0 0 10px #ff0000; }}
+    .msg_falha {{ color: #ff0000 !important; font-size: 0.8em; font-style: italic; font-weight: 400; }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -72,20 +67,15 @@ st.markdown("""
 def check_password():
     if "password_correct" not in st.session_state:
         st.session_state["password_correct"] = False
-    
-    if st.session_state["password_correct"]:
-        return True
+    if st.session_state["password_correct"]: return True
 
     st.title("📟 MURALHA DE SEGURANÇA")
-    st.write("Insira a chave de criptografia para acessar o terminal.")
     password = st.text_input("CHAVE DA REDE:", type="password")
-    
     if st.button("CONECTAR"):
         if password == "cyber2024":
             st.session_state["password_correct"] = True
             st.rerun()
-        else:
-            st.error("ACESSO NEGADO: Assinatura digital inválida.")
+        else: st.error("ACESSO NEGADO.")
     return False
 
 # --- 3. CONTEÚDO PRINCIPAL ---
@@ -94,19 +84,19 @@ if check_password():
 
     tab_combate, tab_rolagem, tab_pericias = st.tabs(["⚔️ COMBATE", "🎲 ROLAGEM LIVRE", "📊 PERÍCIAS"])
 
-    with tab_combate:
-        st.subheader(f"ENERGIA: {st.session_state['pa']} / 10 PA")
-        if st.button("🕒 RECARREGAR PA"):
-            st.session_state["pa"] = 10
-            st.rerun()
-        st.write("Módulo de combate pronto.")
-
     with tab_rolagem:
         st.subheader("TERMINAL DE DADOS NEURAIS")
         entrada = st.text_input("COMANDO (Ex: 2d20+3):", value="2d20+3", key="roll_final")
         
+        # Link RAW do seu áudio m4a
+        LINK_DO_AUDIO = "https://raw.githubusercontent.com/wyxinne/RPG-FUTURISTA-SISTEMA/main/dados%202.m4a"
+
         if st.button("🎲 PROCESSAR"):
+            # O áudio dispara assim que clica no botão
+            play_audio(LINK_DO_AUDIO)
+            
             try:
+                # Limpeza e processamento da string de dados
                 match = re.match(r'(\d+)d(\d+)([+-]\d+)?', entrada.replace(" ", "").lower())
                 if match:
                     qtd, faces = int(match.group(1)), int(match.group(2))
@@ -128,9 +118,16 @@ if check_password():
                     st.markdown(f"### 🚀 TOTAL: **{resultado_final}**")
                     st.write(f"**Cálculo:** {maior_valor} (Maior Dado) + ({bonus})")
                     st.markdown(f"**Dados Rolados:** {', '.join(html_dados)}", unsafe_allow_html=True)
-                else: st.error("Erro de sintaxe.")
-            except Exception: st.error("Falha no terminal.")
+                else: st.error("Erro de sintaxe. Use o formato: 2d20+3")
+            except Exception: st.error("Falha no terminal neural.")
+
+    with tab_combate:
+        st.subheader(f"ENERGIA: {st.session_state['pa']} / 10 PA")
+        if st.button("🕒 RECARREGAR PA"):
+            st.session_state["pa"] = 10
+            st.rerun()
 
     with tab_pericias:
-        st.subheader("PERÍCIAS")
-        st.write("- Programação (Muralha)")
+        st.subheader("BANCO DE DADOS: PERÍCIAS")
+        st.write("● Programação")
+        st.write("● Mecânica")
